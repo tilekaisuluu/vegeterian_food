@@ -6,17 +6,8 @@ export default class Welcome extends React.Component {
     state = {
         email: '',
         password: '',
-        errorMessage: null
     }
 
-    handleLogin = () => {
-        const { email, password } = this.state;
-
-        firebase
-            .auth()
-            .signInWithEmailAndPassword(email, password)
-            .catch(error => this.setState({ errorMessage: error.message}));
-    }
 
     
     
@@ -37,9 +28,6 @@ render() {
             <View style={styles.container}>
             <Text style={styles.header}>vegeterian food</Text>
             <Text style={styles.text}>Healthy & Easy</Text>
-            <View>
-    {this.state.errorMessage && <Text style={styles.error}>{this.state.errorMessage}</Text>}
-            </View>
 
             <TextInput 
                     placeholder="email"
@@ -61,7 +49,8 @@ render() {
 
             <TouchableOpacity 
             style={styles.buttonContainer}
-            onPress={this.handleLogin}
+            onPress={() => navigate('Home')}
+
 
             >
                 <Text style={styles.buttonText}>login</Text>
