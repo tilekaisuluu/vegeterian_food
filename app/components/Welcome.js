@@ -1,15 +1,30 @@
 import React from 'react';
-import { StyleSheet, View, Button, Text, TextInput, TouchableOpacity, ImageBackground } from 'react-native';
+import { StyleSheet, View, Button, Text, TextInput, TouchableOpacity, ImageBackground, Alert, KeyboardAvoidingView, Platform, SafeAreaView, TouchableWithoutFeedback } from 'react-native';
 import { render } from 'react-dom';
+import { NavigationActions } from 'react-navigation';
+import * as firebase from 'firebase';
+
 
 export default class Welcome extends React.Component {
-    state = {
-        email: '',
-        password: '',
+    constructor(props) {
+        super(props);
+        this.state = {
+            email: '',
+            password: '', 
+        };
     }
 
+onLoginPress = () => {
+    firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
+        .then(() => {
 
-    
+        }, (error) => {
+            Alert.alert(error.message);
+        });
+
+}
+
+
     
     static navigationOption = {
         header: null,
@@ -21,7 +36,10 @@ render() {
 
 
     return(
-        
+        <KeyboardAvoidingView
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+        style={styles.container1}
+      >
         <ImageBackground source={require('./frukty.jpg')}
         style={styles.container}
         >
@@ -49,19 +67,20 @@ render() {
 
             <TouchableOpacity 
             style={styles.buttonContainer}
-            onPress={() => navigate('Home')}
-
-
-            >
-                <Text style={styles.buttonText}>login</Text>
+            onPress={this.onLoginPress}>
+            <Text style={styles.buttonText}>login</Text>
             </TouchableOpacity>
             <Text style={styles.text1}>Don't have an account?</Text>
             <Text 
             onPress={() => navigate('SignUp')}
-            style={styles.text1}
-            >Sign up</Text>
+            style={styles.text1}>Sign up</Text>
+            <Text 
+            onPress={() => navigate('ForgotPassword')}
+            style={styles.text1}>Forgot Password?</Text>
             </View>
         </ImageBackground>
+    </KeyboardAvoidingView>
+        
     )
 }
 }
@@ -71,6 +90,9 @@ render() {
 const styles = StyleSheet.create({
     wrapper: {
         flex: 1,
+    },
+    container1: {
+        flex:1
     },
 
     container: {

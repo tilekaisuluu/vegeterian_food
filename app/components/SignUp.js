@@ -5,71 +5,101 @@ import {
   TextInput,
   StyleSheet,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert,
+  KeyboardAvoidingView
 } from 'react-native'
+import * as firebase from 'firebase';
 
 export default class SignUp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: '', 
+      email: '',
       password: '', 
-      email: ''
+      passwordConfirm: '',
     }
   }
+onSignupPress = () => {
+  if (this.state.password !== this.state.passwordConfirm) {
+    Alert.alert("Passwords do not match");
+    return;
+  }
+  firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
+    .then(() => { }, (error) => {
+      Alert.alert(error.message);
 
+    })
+}
 
   render() {
     const { navigate } = this.props.navigation;
 
     return (
+      <KeyboardAvoidingView
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      style={styles.container1}>
       <View style={styles.container}>
           <Text style={styles.header}>vegeterian food</Text>
           <Text style={styles.text}>Let's start the registration</Text>
-        <TextInput
+        <TextInput          
+          value={this.state.email}
           style={styles.input}
           placeholder='Username'
           autoCapitalize="none"
           placeholderTextColor='white'
-          onChangeText={username => this.setState({username})}
+          keyboardType="email-address"
+          onChangeText={(text) => {this.setState({email: text})}}
         />
         <TextInput
+          value={this.state.password}
           style={styles.input}
           placeholder='Password'
           secureTextEntry={true}
           autoCapitalize="none"
           placeholderTextColor='white'
-          onChangeText={password => this.setState({password})}
+          onChangeText={(text) => {this.setState({password: text})}}
         />
         <TextInput
+          value={this.state.passwordConfirm}
           style={styles.input}
-          placeholder='Email'
+          placeholder='Password confirm'
+          secureTextEntry={true}
           autoCapitalize="none"
           placeholderTextColor='white'
-          onChangeText={email => this.setState({email})}
+          onChangeText={(text) => {this.setState({passwordConfirm: text})}}
+
         />
         
 
         <TouchableOpacity 
             style={styles.buttonContainer}
-            onPress={() => navigate('Home')}
-
-            >
-                <Text style={styles.buttonText}>Sign Up</Text>
+            onPress={this.onSignupPress}>
+            <Text style={styles.buttonText}>Sign Up</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity 
+            style={styles.buttonContainer}
+            onPress={() => navigate('Welcome')}>
+            <Text style={styles.buttonText}>Back to Login</Text>
+        </TouchableOpacity>
       </View>
+      </KeyboardAvoidingView>
     )
   }
 }
 
 const styles = StyleSheet.create({
+  container1: {
+    flex:1
+  },
   input: {
     width: 300,
     height: 40,
     backgroundColor: '#000000',
     margin: 5,
     padding: 8,
-    color: '#000000',
+    color: '#fff',
     fontSize: 14,
     fontWeight: '500'
   },
@@ -92,7 +122,7 @@ const styles = StyleSheet.create({
       marginBottom: 10,
       marginTop: 10,
       textAlign: 'center',
-      color: 'white'
+      color: '#000000'
   },
   buttonContainer:{
     width: 300,

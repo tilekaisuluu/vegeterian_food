@@ -4,9 +4,15 @@ import {
   Text,
   View,
   Image,
+  Button,
 } from 'react-native';
+import * as firebase from 'firebase';
 
 export default class Profile extends Component {
+
+  onSignoutPress = () => {
+    firebase.auth().signOut();
+  }
 
   render() {
     return (
@@ -19,6 +25,9 @@ export default class Profile extends Component {
 
                 <Text style={styles.name}>Aisuluu </Text>
 
+            </View>
+            <View>
+              <Button title="Signout" onPress={this.onSignoutPress} />
             </View>
           </View>
 

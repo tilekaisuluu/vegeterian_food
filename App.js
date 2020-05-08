@@ -1,79 +1,81 @@
-import React, { Component } from 'react';
-import {
-  createAppContainer,
-  createSwitchNavigator,
-} from 'react-navigation';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
-import Icon from 'react-native-vector-icons/Ionicons'
-import Welcome from './app/components/Welcome';
-import Home from './app/components/Home';
-import Search from './app/components/Search';
-import Create from './app/components/Create';
-import Profile from './app/components/Profile';
-import SignUp from './app/components/SignUp';
+import React from 'react';
+import { Platform, StatusBar, StyleSheet, View } from 'react-native';
+import { Asset } from 'expo-asset';
+import { AppLoading } from 'expo';
 
+import AppContainer from './navigation/RootNavigation';
+import TabContainer from './navigation/MainTabNavigator';
+import ApiKeys from './constants/ApiKeys';
+import * as firebase from 'firebase';
 
+export default class App extends React.Component {
+  
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoadingComplete: false,
+      isAuthenticationReady: false,
+      isAuthenticated: false,
+    };
 
+    // Initialize firebase...
+    if (!firebase.apps.length) { firebase.initializeApp(ApiKeys.FirebaseConfig); }
+    firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
+  }
 
+  onAuthStateChanged = (user) => {
+    this.setState({isAuthenticationReady: true});
+    this.setState({isAuthenticated: !!user});
+  }
 
-class App extends Component {
   render() {
-    return <AppContainer />
+    if ( (!this.state.isLoadingComplete || !this.state.isAuthenticationReady) && !this.props.skipLoadingScreen) {
+      return (
+        <AppLoading
+          startAsync={this._loadResourcesAsync}
+          onError={this._handleLoadingError}
+          onFinish={this._handleFinishLoading}
+        />
+      );
+    } else {
+      return (
+        <View style={styles.container}>
+          {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+          {Platform.OS === 'android' && <View style={styles.statusBarUnderlay} />}
+          {(this.state.isAuthenticated) ? <TabContainer /> : <AppContainer />}
+        </View>
+      );
+    }
   }
+
+  _loadResourcesAsync = async () => {
+    return Promise.all([
+      Asset.loadAsync([
+        require('./assets/splash.png'),
+        require('./assets/splash.png'),
+      ]),
+
+    ]);
+  };
+
+  _handleLoadingError = error => {
+    // In this case, you might want to report the error to your error
+    // reporting service, for example Sentry
+    console.warn(error);
+  };
+
+  _handleFinishLoading = () => {
+    this.setState({ isLoadingComplete: true });
+  };
 }
-export default App;
 
-const DashboardTabNavigator = createBottomTabNavigator({
-  Home: {
-    screen: Home,
-    navigationOptions: {
-      tabBarLabel: 'HOME',
-      tabBarIcon: ({ tintColor }) => (
-        <Icon name="ios-home" color=
-        {tintColor} size={24} />
-        
-      )
-    }
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
   },
-  Search: {
-    screen: Search,
-    navigationOptions: {
-      tabBarLabel: 'SEARCH',
-      tabBarIcon: ({ tintColor }) => (
-        <Icon name="ios-search" color=
-        {tintColor} size={24} />
-      )
-    }
+  statusBarUnderlay: {
+    height: 24,
+    backgroundColor: 'rgba(0,0,0,0.2)',
   },
-  Create: {
-    screen: Create,
-    navigationOptions: {
-      tabBarLabel: 'CREATE',
-      tabBarIcon: ({ tintColor }) => (
-        <Icon name="ios-add-circle" color=
-        {tintColor} size={24} />
-      )
-    }
-  },
-  Profile: {
-    screen: Profile,
-    navigationOptions: {
-      tabBarLabel: 'PROFILE',
-      tabBarIcon: ({ tintColor }) => (
-        <Icon name="ios-person" color=
-        {tintColor} size={24} />
-      )
-    }
-  }
-})
-
-
-const AppSwitchNavigator = createSwitchNavigator({
-  Welcome: { screen: Welcome },
-  Dashboard: { screen: DashboardTabNavigator },
-  SignUp: { screen: SignUp }
 });
-
-
-
-const AppContainer = createAppContainer(AppSwitchNavigator);
