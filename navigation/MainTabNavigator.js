@@ -5,7 +5,7 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Icon from 'react-native-vector-icons/Ionicons'
 import Home from '../app/components/Home';
 import Search from '../app/components/Search';
-import Create from '../app/components/Create';
+import FoodFormScreen from '../app/components/FoodFormScreen';
 import Profile from '../app/components/Profile';
 
 
@@ -32,8 +32,8 @@ const MainTabNavigator = createBottomTabNavigator({
           )
         }
       },
-      Create: {
-        screen: Create,
+      FoodFormScreen: {
+        screen: FoodFormScreen,
         navigationOptions: {
           tabBarLabel: 'CREATE',
           tabBarIcon: ({ tintColor }) => (

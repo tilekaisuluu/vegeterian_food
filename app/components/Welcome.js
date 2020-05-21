@@ -37,7 +37,6 @@ render() {
 
     return(
         <KeyboardAvoidingView
-        behavior={Platform.OS == "ios" ? "padding" : "height"}
         style={styles.container1}
       >
         <ImageBackground source={require('./frukty.jpg')}
@@ -92,7 +91,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     container1: {
-        flex:1
+        flex: 1
     },
 
     container: {
