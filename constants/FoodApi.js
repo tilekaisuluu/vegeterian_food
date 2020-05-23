@@ -20,6 +20,7 @@ if (!global.atob) { global.atob = decode }
 export function addFood(food, addComplete){
     food.createdAt = firebase.firestore.FieldValue.serverTimestamp();
 
+
     firebase.firestore()
     .collection('Foods')
     .add({food}).then((snapshot) => snapshot.get()

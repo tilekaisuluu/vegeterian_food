@@ -32,7 +32,7 @@ const MainTabNavigator = createBottomTabNavigator({
           )
         }
       },
-      FoodFormScreen: {
+      FoodForm: {
         screen: FoodFormScreen,
         navigationOptions: {
           tabBarLabel: 'CREATE',

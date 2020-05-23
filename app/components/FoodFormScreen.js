@@ -1,11 +1,4 @@
 import React, { Component } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  Button
-} from 'react-native';
 import FoodForm from './FoodForm';
 
 export default class FoodFormScreen extends Component {
@@ -38,7 +31,7 @@ export default class FoodFormScreen extends Component {
         let ingredient = this.state.currentSubIngredient;
 
         if (ingredient && ingredient.length > 2) {
-            this.setState( prevState => ({
+            this.setState(prevState => ({
                 subIngredients: [...prevState.subIngredients, ingredient],
             }))
         }
@@ -62,19 +55,4 @@ render() {
 }
 
 
-const styles = StyleSheet.create({
-    row: {
-        justifyContent: 'space-between',
-        alignSelf: 'stretch',
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 32
-    },
-    container: {
-        width: 300,
-        alignSelf: 'center',
-        alignItems: 'center',
-        marginTop: 32
-    },
-    
-  })
+
