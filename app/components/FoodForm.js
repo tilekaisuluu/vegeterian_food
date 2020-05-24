@@ -9,7 +9,9 @@ import {
 import GridList from './GridList';
 import { withFormik } from 'formik';
 import * as yup from 'yup';
-import { addFood } from '../../constants/FoodApi'
+import { addFood } from '../../constants/FoodApi';
+
+
 
 const FoodForm = (props) => {
   console.log(props);
@@ -17,43 +19,37 @@ const FoodForm = (props) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.validationText}> {props.errors.name} </Text>
-      <TextInput 
-      style={styles.longFormInput}
-      placeholder='Name'
-      onChangeText={text => { props.setFieldValue('name', text)}}
+      <TextInput
+        style={styles.longFormInput}
+        placeholder='Name'
+        onChangeText={text => { props.setFieldValue('name', text) }}
       />
-      <Text style={styles.validationText}> {props.errors.category} </Text>
-
-      <TextInput 
-      style={styles.longFormInput}
-      placeholder='Category'
-      onChangeText={text => { props.setFieldValue('category', text)}}
+      <Text style={styles.validationText}> {props.errors.name}</Text>
+      <TextInput
+        style={styles.longFormInput}
+        placeholder='Category'
+        onChangeText={text => { props.setFieldValue('category', text) }}
       />
-        <View style={styles.row}>
-            <TextInput 
-            style={styles.formInput}
-            onChangeText={text => {props.setSubIngredients(text)}}
-            placeholder='Sub-ingredient'
-            />
-            <Button
-            style={styles.button}
-            title='Add'
-            onPress={() => {props.submitSubIngredients()}} 
-             />
-
-
-        </View>
-        <GridList
-        items={props.ingredientArray}
+      <Text style={styles.validationText}> {props.errors.category}</Text>
+      <View style={styles.row}>
+        <TextInput
+          style={styles.formInput}
+          onChangeText={text => { props.setSubIngredients(text) }}
+          placeholder='Sub-ingredient'
         />
-        <Button 
+        <Button
+          style={styles.button}
+          title='Add'
+          onPress={() => { props.submitSubIngredients() }} />
+      </View>
+      <GridList
+        items={props.ingredientArray} />
+      <Button
         title='Submit'
-        onPress= {() => props.handleSubmit()}
-        />
-
+        onPress={() => props.handleSubmit()}
+      />
     </View>
-)
+  );
 }
 
 const styles = StyleSheet.create({
@@ -98,15 +94,18 @@ export default withFormik({
   mapPropsToValues: () => ({ name: '', category: '' }),
   validationSchema: (props) => yup.object().shape({
     name: yup.string().max(30).required(),
-    category: yup.string().max(15).required(),
+    category: yup.string().max(15).required()
   }),
   handleSubmit: (values, { props }) => {
-    console.log(props)
+    console.log(props);
 
     values.subIngredients = props.ingredientArray;
-    console.log(values)
-
+    console.log(values);
     addFood(values, props.onFoodAdded)
+
+
+    
+
 
   },
 })(FoodForm);

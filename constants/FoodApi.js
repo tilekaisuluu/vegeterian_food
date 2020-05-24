@@ -23,16 +23,13 @@ export function addFood(food, addComplete){
 
     firebase.firestore()
     .collection('Foods')
-    .add({food}).then((snapshot) => snapshot.get()
+    .add(food).then((snapshot) => snapshot.get()
     ).then((foodData) => addComplete(foodData.data()))
     .catch((error) => console.log(error));
 }
 
 export async function getFoods(foodsRetrieved){
-
-
     var foodList = [];
-
 
     var snapshot = await firebase.firestore()
     .collection('Foods')
