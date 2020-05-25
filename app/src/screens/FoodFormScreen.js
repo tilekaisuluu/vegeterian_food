@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import FoodForm from './FoodForm';
+import FoodForm from '../ui/FoodForm';
 
 export default class FoodFormScreen extends Component {
 
@@ -47,7 +47,7 @@ export default class FoodFormScreen extends Component {
         setSubIngredients={this.setCurrentSubIngredient}
         submitSubIngredients={this.submitSubIngredients}
         ingredientArray={this.state.subIngredients}
-        onFoodAdded={this.props.navigation.state.params}
+        onFoodAdded={this.props.navigation.getParam('foodAddedCallback')}
       />
     );
   }

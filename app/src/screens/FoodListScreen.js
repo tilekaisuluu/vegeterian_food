@@ -2,11 +2,28 @@ import React, { Component } from 'react';
 import { StyleSheet, FlatList, SafeAreaView, View, Button } from 'react-native';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import { ListItem , Divider } from 'react-native-elements';
-import { addFood, getFoods } from '../../constants/FoodApi';
+import { addFood, getFoods, signout } from '../api/FoodApi';
+
 import ActionButton from 'react-native-action-button';
 
 
 class Home extends Component {
+
+    static navigationOptions = ({ navigation }) => {
+
+        onSignedOut = () => {
+          navigation.navigate('Auth');
+        }
+    
+        return {
+          title: 'Food List',
+          headerRight: (
+            <Button
+              title='log out'
+              onPress={() => signout(onSignedOut)} />
+          )
+        }
+      };
 
  
 state = { 
@@ -37,6 +54,7 @@ componentDidMount() {
         return(
             <SafeAreaView style={styles.container}>
 
+
                         <FlatList
                         data={this.state.foodList}
                         ItemSeparatorComponent={() => <Divider style={{ backgroundColor: 'black' }}/>}
@@ -54,7 +72,7 @@ componentDidMount() {
                         />
                          <ActionButton 
                         buttonColor='blue'
-                        onPress={() => this.props.navigation.navigate('FoodForm', this.onFoodAdded)}
+                        onPress={() => this.props.navigation.navigate('FoodForm', {foodAddedCallback: this.onFoodAdded})}
                         />
                      
 

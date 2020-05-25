@@ -14,6 +14,7 @@ export default class Welcome extends React.Component {
         };
     }
 
+
 onLoginPress = () => {
     firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
         .then(() => {

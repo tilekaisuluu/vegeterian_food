@@ -8,7 +8,7 @@ import {
   Image
 } from 'react-native';
 import { Divider, Icon } from 'react-native-elements';
-import { deleteFood } from '../../constants/FoodApi'
+import { deleteFood } from '../api/FoodApi'
 
 class FoodDetailScreen extends Component {
 
