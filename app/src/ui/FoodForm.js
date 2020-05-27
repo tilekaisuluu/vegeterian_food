@@ -4,31 +4,50 @@ import {
   View,
   TextInput,
   Text,
-  Button
+  Button,
+  SafeAreaView,
+  ScrollView
 } from 'react-native';
 import GridList from './GridList';
 import { withFormik } from 'formik';
 import * as yup from 'yup';
-import { addFood } from '../api/FoodApi';
+import { addFood, updateFood } from '../api/FoodApi';
+import FoodImagePicker from './ImagePicker'
 
 
 
 const FoodForm = (props) => {
+  setFoodImage = (image) => {
+    props.setFieldValue('imageUri', image.uri);
+  }
+
   console.log(props);
 
 
   return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
     <View style={styles.container}>
+
+      <FoodImagePicker image={props.food.image} onImagePicked={setFoodImage}/>
       <TextInput
+        value={props.values.name}
         style={styles.longFormInput}
         placeholder='Name'
         onChangeText={text => { props.setFieldValue('name', text) }}
       />
       <Text style={styles.validationText}> {props.errors.name}</Text>
       <TextInput
+        value={props.values.category}
         style={styles.longFormInput}
         placeholder='Category'
         onChangeText={text => { props.setFieldValue('category', text) }}
+      />
+       <TextInput
+        value={props.values.notes}
+        style={styles.longFormInput}
+        placeholder='Notes'
+        onChangeText={text => { props.setFieldValue('notes', text) }}
       />
       <Text style={styles.validationText}> {props.errors.category}</Text>
       <View style={styles.row}>
@@ -43,12 +62,14 @@ const FoodForm = (props) => {
           onPress={() => { props.submitSubIngredients() }} />
       </View>
       <GridList
-        items={props.ingredientArray} />
+        items={props.food.subIngredients} />
       <Button
         title='Submit'
         onPress={() => props.handleSubmit()}
       />
     </View>
+    </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -91,7 +112,13 @@ const styles = StyleSheet.create({
 });
 
 export default withFormik({
-  mapPropsToValues: () => ({ name: '', category: '' }),
+  mapPropsToValues: ({ food }) => ({
+     name: food.name,
+     category: food.category,
+     notes: food.notes,
+     imageUri: null
+     }),
+  enableReinitialize: true,
   validationSchema: (props) => yup.object().shape({
     name: yup.string().max(30).required(),
     category: yup.string().max(15).required()
@@ -99,13 +126,19 @@ export default withFormik({
   handleSubmit: (values, { props }) => {
     console.log(props);
 
-    values.subIngredients = props.ingredientArray;
+    values.subIngredients = props.food.subIngredients;
     console.log(values);
-    addFood(values, props.onFoodAdded)
+
+    if (props.food.id) {
+      values.id = props.food.id;
+      values.createdAt = props.food.createdAt;
+      updateFood(values, props.onFoodUpdated);
+    } else {
+      addFood(values, props.omFoodAdded)
+    }
 
 
-    
-
+  
 
   },
 })(FoodForm);

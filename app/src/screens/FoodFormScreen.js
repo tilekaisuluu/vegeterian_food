@@ -3,25 +3,37 @@ import FoodForm from '../ui/FoodForm';
 
 export default class FoodFormScreen extends Component {
 
+  static navigationOptopns = ({ navigation }) => {
+    console.log(navigation);
+    return {
+      title: navigation.getParam('food') ? 'Edit food' : 'New food'
+    }
+  };
+
 
   state = {
-      foodName: null,
+    food: {
+      name: null,
       category: null,
-      currentSubIngredient: null,
+      notes: null,
       subIngredients: []
+    },
+      currentSubIngredient: null,
   }
 
-  setFoodName = (text) => {
-      this.setState(prevState => ({
-          foodName: prevState.foodName = text
-      }))
-  }
-  setCategory = (text) => {
-    this.setState(prevState => ({
-        foodName: prevState.category = text
-    }))
-}
+  componentDidMount () {
+    const currentFood = this.props.navigation.getParam('food');
+    console.log(currentFood);
 
+    if (currentFood) {
+      this.setState(prevState => ({ food: prevState.food = currentFood}))
+    }
+  }
+
+  onFoodUpdated = (food) => {
+    console.log(food);
+    this.props.navigation.popToTop( )
+  }
 
   setCurrentSubIngredient = (text) => {
     this.setState(prevState => ({
@@ -34,7 +46,7 @@ export default class FoodFormScreen extends Component {
 
     if (ingredient && ingredient.length > 2) {
       this.setState(prevState => ({
-          subIngredients: [...prevState.subIngredients, ingredient],
+        food : {...prevState.food, subIngredients: [...prevState.food.subIngredients, ingredient]},
       }))
     }
   }
@@ -42,12 +54,11 @@ export default class FoodFormScreen extends Component {
   render() {
     return (
       <FoodForm
-        setFoodName={this.setFoodName}
-        setCategory={this.setCategory}
         setSubIngredients={this.setCurrentSubIngredient}
         submitSubIngredients={this.submitSubIngredients}
-        ingredientArray={this.state.subIngredients}
+        food={this.state.food}
         onFoodAdded={this.props.navigation.getParam('foodAddedCallback')}
+        onFoodUpdated={this.onFoodUpdated}
       />
     );
   }

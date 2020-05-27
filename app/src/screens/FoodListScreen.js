@@ -17,18 +17,18 @@ class Home extends Component {
     
         return {
           title: 'Food List',
-          headerRight: (
+          headerRight: () =>
             <Button
               title='log out'
               onPress={() => signout(onSignedOut)} />
-          )
+          
         }
       };
 
  
 state = { 
     foodList: [],
-    currentFoodItem: null,
+    selectedIndex: 0
 }
 
 
@@ -37,6 +37,20 @@ onFoodAdded = (food) => {
         foodList: [...prevState.foodList, food]
     }));
 }
+
+onFoodDeleted = () => {
+    console.log(this.state.selectedIndex);
+
+    var newFoodList = [...this.state.foodList]
+    newFoodList.splice(this.state.selectedIndex, 1);
+
+    this.setState(prevState => ({
+        foodList: prevState.foodList = newFoodList
+    }));
+
+    this.props.navigation.popToTop();
+}
+
 
 onFoodsRecieved = (foodList) => {
     console.log(foodList);
@@ -59,13 +73,17 @@ componentDidMount() {
                         data={this.state.foodList}
                         ItemSeparatorComponent={() => <Divider style={{ backgroundColor: 'black' }}/>}
                         keyExtractor={(item, index) => index.toString()}
-                        renderItem={({ item }) => {
+                        renderItem={({ item, index }) => {
                             console.log(item)
                             return (
                                 <ListItem
                                 title={item.name}
                                 subtitle={item.category}
-                                onPress={() => {}}
+                                onPress={() => {
+                                    this.setState(prevState => ({ selectedIndex: prevState.selectedIndex = index}))
+                                    this.props.navigation.navigate('FoodDetail', { food: item, foodDeletedCallback : this.onFoodDeleted})
+
+                                }}
                                 />
                             );
                         }}

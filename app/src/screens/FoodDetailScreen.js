@@ -5,7 +5,10 @@ import {
   FlatList,
   StyleSheet,
   Alert,
-  Image
+  Image,
+  Button,
+  SafeAreaView,
+  ScrollView
 } from 'react-native';
 import { Divider, Icon } from 'react-native-elements';
 import { deleteFood } from '../api/FoodApi'
@@ -25,8 +28,31 @@ class FoodDetailScreen extends Component {
 
     console.log(food);
     return (
+      <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
       <View style={styles.container}>
-        <View style={styles.row}>
+
+        <Text style={styles.headerText}>{food.name}</Text>
+        <Text style={styles.categoryText}>{food.category}</Text>
+        <Text style={styles.notes}>{food.notes}</Text>
+
+
+        <Text style={styles.ingredientText}>Ingredients:</Text>
+        {
+          food.subIngredients === undefined || food.subIngredients.length == 0 ?
+            <Text>None</Text> : <FlatList
+              data={food.subIngredients}
+              contentContainerStyle={styles.listContainer}
+              ItemSeparatorComponent={() =>
+                <Divider style={{ backgroundColor: 'black' }} />}
+              scrollEnabled={false}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) =>
+                <Text style={styles.ingredientItemText}>{item}</Text>
+              }
+            />
+        }
+                <View style={styles.row}>
           <Icon
             reverse
             name='ios-create'
@@ -55,26 +81,10 @@ class FoodDetailScreen extends Component {
             }
           />
         </View>
-        <Image style={styles.image} source={food.image && { uri: food.image }} />
-        <Text style={styles.headerText}>{food.name}</Text>
-        <Text style={styles.categoryText}>Category: {food.category}</Text>
-
-        <Text style={styles.ingredientText}>Ingredients</Text>
-        {
-          food.subIngredients === undefined || food.subIngredients.length == 0 ?
-            <Text>None</Text> : <FlatList
-              data={food.subIngredients}
-              contentContainerStyle={styles.listContainer}
-              ItemSeparatorComponent={() =>
-                <Divider style={{ backgroundColor: 'black' }} />}
-              scrollEnabled={false}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) =>
-                <Text style={styles.ingredientItemText}>{item}</Text>
-              }
-            />
-        }
       </View >
+      
+      </ScrollView >
+      </SafeAreaView >
     );
   }
 }
@@ -82,7 +92,12 @@ class FoodDetailScreen extends Component {
 const styles = StyleSheet.create({
   headerText: {
     fontSize: 32,
-    marginBottom: 32
+    marginTop: 20,
+    marginBottom: 10,
+    fontWeight: "bold"
+
+    
+
   },
   image: {
     width: '100%',
@@ -99,13 +114,21 @@ const styles = StyleSheet.create({
     paddingRight: 16
   },
   categoryText: {
-    fontSize: 20,
+    fontSize: 14,
     marginBottom: 32
+  },
+  notes: {
+    fontSize: 14,
+    marginBottom: 20,
+    alignItems: 'center',
+    borderLeftWidth: 15,
+    textAlign: "center",
+
   },
   ingredientText: {
     fontStyle: 'italic',
     fontSize: 18,
-    marginBottom: 32
+    marginBottom: 20,
   },
   ingredientItemText: {
     fontSize: 16,
@@ -114,7 +137,10 @@ const styles = StyleSheet.create({
     marginTop: 16
   },
   container: {
-    alignItems: 'center'
+    flex: 1,
+    width: 300,
+    alignSelf: 'center',
+    alignItems: 'center',
   },
   listContainer: {
     borderWidth: 0.5,
