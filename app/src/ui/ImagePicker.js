@@ -22,23 +22,20 @@ const FoodImagePicker = ({ image, onImagePicked }) => {
   
 
   pickImageHandler = async () => {
-    try {
-      let result = await ImagePicker.launchImageLibraryAsync({
+      let response = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
       });
-      if (!result.cancelled) {
+      if (!response.cancelled) {
         setSelectedImage({ uri: response.uri });
         onImagePicked({ uri: response.uri });
 
       }
 
-      console.log(result);
-    } catch (E) {
-      console.log(E);
-    }
+      console.log(response);
+
   };
   
 

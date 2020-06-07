@@ -11,11 +11,11 @@ import {
 import GridList from './GridList';
 import { withFormik } from 'formik';
 import * as yup from 'yup';
-import { addFood, updateFood } from '../api/FoodApi';
+import { addFood, updateFood, uploadFood } from '../api/FoodApi';
 import FoodImagePicker from './ImagePicker'
 
 
-
+// if we pick a new food  imageUri will be set, if not the imageUri will be null
 const FoodForm = (props) => {
   setFoodImage = (image) => {
     props.setFieldValue('imageUri', image.uri);
@@ -127,18 +127,17 @@ export default withFormik({
     console.log(props);
 
     values.subIngredients = props.food.subIngredients;
-    console.log(values);
 
+    console.log(values);
+// if props.food.id  then update the food,
     if (props.food.id) {
       values.id = props.food.id;
       values.createdAt = props.food.createdAt;
-      updateFood(values, props.onFoodUpdated);
+      values.image = props.food.image;
+      uploadFood(values, props.onFoodUpdated, { updating: true });
+      // if not add new food
     } else {
-      addFood(values, props.omFoodAdded)
+      uploadFood(values, props.onFoodAdded, { updating: false });
     }
-
-
-  
-
   },
 })(FoodForm);
