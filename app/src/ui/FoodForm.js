@@ -6,7 +6,8 @@ import {
   Text,
   Button,
   SafeAreaView,
-  ScrollView
+  ScrollView,
+  KeyboardAvoidingView
 } from 'react-native';
 import GridList from './GridList';
 import { withFormik } from 'formik';
@@ -26,10 +27,14 @@ const FoodForm = (props) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
-    <View style={styles.container}>
+      <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
 
-      <FoodImagePicker image={props.food.image} onImagePicked={setFoodImage}/>
+      <ScrollView>
+        
+    <View style={styles.container}>
+      
+
+      <FoodImagePicker image={props.food.imageUri} onImagePicked={setFoodImage}/>
       <TextInput
         value={props.values.name}
         style={styles.longFormInput}
@@ -45,7 +50,7 @@ const FoodForm = (props) => {
       />
        <TextInput
         value={props.values.notes}
-        style={styles.longFormInput}
+        style={styles.notes}
         placeholder='Notes'
         onChangeText={text => { props.setFieldValue('notes', text) }}
       />
@@ -64,11 +69,13 @@ const FoodForm = (props) => {
       <GridList
         items={props.food.subIngredients} />
       <Button
+        style={styles.button}
         title='Submit'
         onPress={() => props.handleSubmit()}
       />
     </View>
     </ScrollView>
+    </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -94,8 +101,7 @@ const styles = StyleSheet.create({
     height: 50,
     color: 'black',
     width: '75%',
-    marginBottom: 16,
-    marginTop: 16
+    marginBottom: 30,
   },
   validationText: {
     color: 'red'
@@ -109,6 +115,15 @@ const styles = StyleSheet.create({
     padding: 8,
     margin: 16
   },
+  notes: {
+    width: '100%',
+    height: 150,
+    color: 'black',
+    borderColor: '#B5B4BC',
+    borderWidth: 1,
+    padding: 8,
+    margin: 16
+  }
 });
 
 export default withFormik({
@@ -116,7 +131,7 @@ export default withFormik({
      name: food.name,
      category: food.category,
      notes: food.notes,
-     imageUri: null
+     imageUri: food.imageUri
      }),
   enableReinitialize: true,
   validationSchema: (props) => yup.object().shape({
@@ -133,7 +148,7 @@ export default withFormik({
     if (props.food.id) {
       values.id = props.food.id;
       values.createdAt = props.food.createdAt;
-      values.image = props.food.image;
+      values.imageUri = props.food.imageUri;
       uploadFood(values, props.onFoodUpdated, { updating: true });
       // if not add new food
     } else {

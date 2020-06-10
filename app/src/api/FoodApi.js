@@ -1,56 +1,56 @@
 import * as firebase from 'firebase';
 import 'firebase/firestore';
 import ApiKeys from './ApiKeys';
-import {decode, encode} from 'base-64'
+import { decode, encode } from 'base-64'
 import { v4 as uuidv4 } from 'uuid';
-
+import { uploadImage } from './helper';
 
 
 
 window.addEventListener = (x) => x;
 
 if (!firebase.apps.length) { firebase.initializeApp(ApiKeys.FirebaseConfig); }
-   
 
-if (!global.btoa) {  global.btoa = encode }
+
+if (!global.btoa) { global.btoa = encode }
 
 if (!global.atob) { global.atob = decode }
 
 export function login({ email, password }) {
-    firebase.auth().signInWithEmailAndPassword(email, password)
-      .then((value) => console.log(value))
-  }
-  
-  export function signup({ email, password, displayName }) {
-    firebase.auth().createUserWithEmailAndPassword(email, password)
-      .then((userInfo) => {
-        console.log(userInfo)
-        userInfo.user.updateProfile({ displayName: displayName.trim() })
-          .then(() => { })
-      })
-  }
-  
-  export function subscribeToAuthChanges(authStateChanged) {
-    firebase.auth().onAuthStateChanged((user) => {
-      authStateChanged(user);
+  firebase.auth().signInWithEmailAndPassword(email, password)
+    .then((value) => console.log(value))
+}
+
+export function signup({ email, password, displayName }) {
+  firebase.auth().createUserWithEmailAndPassword(email, password)
+    .then((userInfo) => {
+      console.log(userInfo)
+      userInfo.user.updateProfile({ displayName: displayName.trim() })
+        .then(() => { })
     })
-  }
-  
-  
-  export function signout(onSignedOut) {
-    firebase.auth().signOut()
-      .then(() => {
-        onSignedOut();
-      })
-  }
+}
+
+export function subscribeToAuthChanges(authStateChanged) {
+  firebase.auth().onAuthStateChanged((user) => {
+    authStateChanged(user);
+  })
+}
+
+
+export function signout(onSignedOut) {
+  firebase.auth().signOut()
+    .then(() => {
+      onSignedOut();
+    })
+}
 
 
 
 export function updateFood(food, updateComplete) {
-    food.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
-    console.log(food);
+  food.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+  console.log(food);
 
-    firebase.firestore()
+  firebase.firestore()
     .collection('Foods')
     .doc(food.id).set(food)
     .then(() => updateComplete(food))
@@ -59,9 +59,9 @@ export function updateFood(food, updateComplete) {
 
 
 export function deleteFood(food, deleteComplete) {
-    console.log(food);
+  console.log(food);
 
-    firebase.firestore()
+  firebase.firestore()
     .collection('Foods')
     .doc(food.id).delete()
     .then(() => deleteComplete())
@@ -69,86 +69,49 @@ export function deleteFood(food, deleteComplete) {
 }
 
 
-export async function getFoods(foodsRetrieved){
-    var foodList = [];
-
-    var snapshot = await firebase.firestore()
+export async function getFoods(foodsRetrieved) {
+  await firebase.firestore()
     .collection('Foods')
     .orderBy('createdAt')
-    .get()
+    .onSnapshot((snapshot) => {
+      const foodList = [];
 
-
-    snapshot.forEach((doc) => {
-
+      snapshot.forEach((doc) => {
         const foodItem = doc.data();
         foodItem.id = doc.id;
-        foodList.push(foodItem);
-    });
+        foodList.push(foodItem)
+      });
 
-    console.log(foodList)
-    foodsRetrieved(foodList);
+      foodsRetrieved(foodList);
+    })
 }
 
 
-// addfood function is going if uploadFood will successful
 
-//food is object, onFoodUploaded is callback, updating is boolean to update food later
 export function uploadFood(food, onFoodUploaded, { updating }) {
-
-  // if  food imageUri field set for food object, 
   if (food.imageUri) {
-    // creating the file name for food image and split it  and pop the last part of the array, after i have only extencion jpg
     const fileExtension = food.imageUri.split('.').pop();
     console.log("EXT: " + fileExtension);
-// creating a unique id for image 
     var uuid = uuidv4();
-// creating unique file name for each of image and storage database
     const fileName = `${uuid}.${fileExtension}`;
 
-    console.log(fileName);
+    console.log(food.imageUri);
 
-// creating reference to a location in storage bucket on firebase to store file
-    var storageRef = firebase.storage().ref(`foods/images/${fileName}`);
-// put the file 'food.imageUri' 
-// taking the uri that i have which is the path to the file on the local machine and put that into storage ref 
-    storageRef.putFile(food.imageUri)
-    // on is listen for the change in the event
-      .on(
-        firebase.storage.TaskEvent.STATE_CHANGED,
-        snapshot => {
-          console.log("snapshot: " + snapshot.state);
-          console.log("progress: " + (snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+    uploadImage(firebase, food.imageUri, `foods/images/${fileName}`).then(downloadUrl => {
+      console.log("File available at: " + downloadUrl);
 
-          if (snapshot.state === firebase.storage.TaskState.SUCCESS) {
-            console.log("Success");
-          }
-        },
-        error => {
-          unsubscribe();
-          console.log("image upload error: " + error.toString());
-        },
+      food.imageUri = downloadUrl
 
-        // getDownloadURL function fetches the url from storageRef
-        () => {
-          storageRef.getDownloadURL()
-            .then((downloadUrl) => {
-              console.log("File available at: " + downloadUrl);
+      if (updating) {
+        console.log("Updating....");
+        updateFood(food, onFoodUploaded);
+      } else {
+        console.log("adding...");
+        addFood(food, onFoodUploaded);
+      }
+    })
 
-              delete food.imageUri;
-
-              // 
-              if (updating) {
-                console.log("Updating....");
-                updateFood(food, onFoodUploaded);
-              } else {
-                console.log("adding...");
-                addFood(food, onFoodUploaded);
-              }
-            })
-        }
-      )
-
-  // if there are no new image for food
+    // if there are no new image for food
   } else {
     console.log("Skipping image upload");
 

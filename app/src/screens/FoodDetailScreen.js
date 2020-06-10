@@ -6,7 +6,6 @@ import {
   StyleSheet,
   Alert,
   Image,
-  Button,
   SafeAreaView,
   ScrollView
 } from 'react-native';
@@ -31,6 +30,7 @@ class FoodDetailScreen extends Component {
       <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
       <View style={styles.container}>
+        <Image style={styles.image} source={food.imageUri && { uri: food.imageUri}} /> 
 
         <Text style={styles.headerText}>{food.name}</Text>
         <Text style={styles.categoryText}>{food.category}</Text>
@@ -100,8 +100,8 @@ const styles = StyleSheet.create({
 
   },
   image: {
-    width: '100%',
-    aspectRatio: 2,
+    width: 300,
+    height: 300,
     marginBottom: 16
   },
   row: {

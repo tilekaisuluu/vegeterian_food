@@ -28,7 +28,7 @@ const AuthForm = (props) => {
     style={styles.container}
     >
     <View style={styles.container}>
-      <Text h2 style={styles.header}>Vegeterian Food</Text>
+      <Text h2 style={styles.header}>Good Food</Text>
       {props.authMode === 'signup' ? displayNameInput : null}
       <TextInput
         style={styles.formInput}
