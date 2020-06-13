@@ -3,7 +3,9 @@ import {
   View,
   Button,
   Image,
-  StyleSheet
+  StyleSheet,
+  TouchableOpacity,
+  Text
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -12,16 +14,16 @@ const FoodImagePicker = ({ image, onImagePicked }) => {
 
   const [selectedImage, setSelectedImage] = useState();
 
+// to listen changes in state
   useEffect(() => {
     if (image) {
-      console.log("useEffect: " + image);
       setSelectedImage({ uri: image });
     }
   }, [image])
 
   
 
-  pickImageHandler = async () => {
+  const pickImageHandler = async () => {
       let response = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: true,
@@ -31,11 +33,7 @@ const FoodImagePicker = ({ image, onImagePicked }) => {
       if (!response.cancelled) {
         setSelectedImage({ uri: response.uri });
         onImagePicked({ uri: response.uri });
-
       }
-
-      console.log(response);
-
   };
   
 
@@ -45,11 +43,17 @@ const FoodImagePicker = ({ image, onImagePicked }) => {
         <Image source={selectedImage} style={styles.previewImage} />
       </View>
       <View styels={styles.button}>
-        <Button title="Pick Image" onPress={this.pickImageHandler} />
+        <TouchableOpacity
+        onPress={pickImageHandler}
+        >
+          <Text>Pick image</Text>
+        </TouchableOpacity>
       </View>
     </View>
   )
 }
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -57,11 +61,11 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   imageContainer: {
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: 'black',
     backgroundColor: '#eee',
-    width: '80%',
-    height: 150
+    width: '100%',
+    height: 300
   },
   button: {
     margin: 8

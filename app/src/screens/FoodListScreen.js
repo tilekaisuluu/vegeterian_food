@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
-import { StyleSheet, FlatList, SafeAreaView, View, Button } from 'react-native';
+import {
+  StyleSheet,
+  FlatList,
+  SafeAreaView,
+  View,
+  Button,
+  VirtualizedList
+} from 'react-native';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import { ListItem, Divider } from 'react-native-elements';
 import { addFood, getFoods, signout } from '../api/FoodApi';
@@ -39,8 +46,6 @@ class Home extends Component {
   }
 
   onFoodDeleted = () => {
-    console.log(this.state.selectedIndex);
-
     var newFoodList = [...this.state.foodList]
     newFoodList.splice(this.state.selectedIndex, 1);
 
@@ -53,11 +58,13 @@ class Home extends Component {
 
 
   onFoodsRecieved = (foodList) => {
-    console.log(foodList);
     this.setState({ foodList });
   }
 
   componentDidMount() {
+    getFoods(this.onFoodsRecieved);
+  }
+  componentWillUnmount() {
     getFoods(this.onFoodsRecieved);
   }
 
@@ -65,22 +72,19 @@ class Home extends Component {
   render() {
     return (
       <SafeAreaView style={styles.container}>
-
-
         <FlatList
           data={this.state.foodList}
           ItemSeparatorComponent={() => <Divider style={{ backgroundColor: 'black' }} />}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item, index }) => {
-            console.log(item)
             return (
               <ListItem
                 title={item.name}
                 subtitle={item.category}
-                leftAvatar = {{
+                leftAvatar={{
                   size: 'large',
                   rounded: false,
-                  source: item.imageUri && {uri: item.imageUri}
+                  source: item.imageUri && { uri: item.imageUri }
                 }}
                 onPress={() => {
                   this.setState(prevState => ({ selectedIndex: prevState.selectedIndex = index }))
@@ -95,9 +99,6 @@ class Home extends Component {
           buttonColor='blue'
           onPress={() => this.props.navigation.navigate('FoodForm', { foodAddedCallback: this.onFoodAdded })}
         />
-
-
-
       </SafeAreaView>
 
     )

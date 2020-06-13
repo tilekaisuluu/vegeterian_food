@@ -7,7 +7,8 @@ import {
   Alert,
   Image,
   SafeAreaView,
-  ScrollView
+  ScrollView,
+  Dimensions
 } from 'react-native';
 import { Divider, Icon } from 'react-native-elements';
 import { deleteFood } from '../api/FoodApi'
@@ -25,10 +26,9 @@ class FoodDetailScreen extends Component {
 
     const onFoodDeleted = this.props.navigation.getParam('foodDeletedCallback');
 
-    console.log(food);
     return (
       <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
+      <ScrollView style={{padding: 0}}>
       <View style={styles.container}>
         <Image style={styles.image} source={food.imageUri && { uri: food.imageUri}} /> 
 
@@ -88,19 +88,16 @@ class FoodDetailScreen extends Component {
     );
   }
 }
-
+const screenWidth = Math.round(Dimensions.get('window').width);
 const styles = StyleSheet.create({
   headerText: {
     fontSize: 32,
     marginTop: 20,
     marginBottom: 10,
     fontWeight: "bold"
-
-    
-
   },
   image: {
-    width: 300,
+    width: screenWidth,
     height: 300,
     marginBottom: 16
   },
@@ -120,9 +117,11 @@ const styles = StyleSheet.create({
   notes: {
     fontSize: 14,
     marginBottom: 20,
+    marginRight: 8,
+    marginLeft: 8,
     alignItems: 'center',
     borderLeftWidth: 15,
-    textAlign: "center",
+    textAlign: "left",
 
   },
   ingredientText: {
@@ -138,7 +137,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    width: 300,
+    width: screenWidth,
     alignSelf: 'center',
     alignItems: 'center',
   },

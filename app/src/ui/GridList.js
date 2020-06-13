@@ -14,7 +14,6 @@ const GridList = (props) => {
         data={props.items}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => {
-          console.log(item);
           return <Text style={styles.item}>{item}</Text>
         }
         }

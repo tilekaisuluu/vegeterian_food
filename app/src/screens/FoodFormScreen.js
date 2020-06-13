@@ -4,7 +4,6 @@ import FoodForm from '../ui/FoodForm';
 export default class FoodFormScreen extends Component {
 
   static navigationOptopns = ({ navigation }) => {
-    console.log(navigation);
     return {
       title: navigation.getParam('food') ? 'Edit food' : 'New food'
     }
@@ -23,7 +22,6 @@ export default class FoodFormScreen extends Component {
 
   componentDidMount () {
     const currentFood = this.props.navigation.getParam('food');
-    console.log(currentFood);
 
     if (currentFood) {
       this.setState(prevState => ({ food: prevState.food = currentFood}))
@@ -31,7 +29,6 @@ export default class FoodFormScreen extends Component {
   }
 
   onFoodUpdated = (food) => {
-    console.log(food);
     this.props.navigation.popToTop( )
   }
 

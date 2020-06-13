@@ -48,13 +48,12 @@ export function signout(onSignedOut) {
 
 export function updateFood(food, updateComplete) {
   food.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
-  console.log(food);
 
   firebase.firestore()
     .collection('Foods')
     .doc(food.id).set(food)
     .then(() => updateComplete(food))
-    .catch((error) => console.log(error));
+    .catch((error) => console.error(error));
 }
 
 
@@ -91,15 +90,10 @@ export async function getFoods(foodsRetrieved) {
 export function uploadFood(food, onFoodUploaded, { updating }) {
   if (food.imageUri) {
     const fileExtension = food.imageUri.split('.').pop();
-    console.log("EXT: " + fileExtension);
     var uuid = uuidv4();
     const fileName = `${uuid}.${fileExtension}`;
 
-    console.log(food.imageUri);
-
     uploadImage(firebase, food.imageUri, `foods/images/${fileName}`).then(downloadUrl => {
-      console.log("File available at: " + downloadUrl);
-
       food.imageUri = downloadUrl
 
       if (updating) {

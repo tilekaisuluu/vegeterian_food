@@ -27,9 +27,11 @@ const AuthForm = (props) => {
     <ImageBackground source={require('./frukty.jpg')}
     style={styles.container}
     >
+
     <View style={styles.container}>
       <Text h2 style={styles.header}>Good Food</Text>
       {props.authMode === 'signup' ? displayNameInput : null}
+      <View style={styles.container1}>
       <TextInput
         style={styles.formInput}
         onChangeText={text => props.setFieldValue('email', text)}
@@ -56,6 +58,8 @@ const AuthForm = (props) => {
         buttonStyle={styles.buttonContainer}
         onPress={() => props.switchAuthMode()}
         title={props.authMode === 'login' ? 'Create an account' : 'Login'} />
+        
+        </View>
     </View>
     </ImageBackground>
 
@@ -64,33 +68,32 @@ const AuthForm = (props) => {
 
 const styles = StyleSheet.create({
   header: {
-    marginBottom: 60,
     fontFamily: "Cochin",
     fontSize: 32,
     color: '#fff',
-    marginBottom: 80,
     fontWeight: 'bold',
-    textAlign: "center"
+    textAlign: "center",
+    marginTop: 64
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   validationText: {
-    marginTop: 8,
-    marginBottom: 16,
+    marginTop: 4,
+    marginBottom: 4,
     color: 'red',
     alignSelf: 'center'
   },
   formInput: {
     width: 300,
     padding: 16,
-    marginBottom: 10,   
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: 'rgba(255,255,255,0.5)',
     marginHorizontal: 10,
     height: 50,
-    color: '#fff',
+    borderRadius: 10,
+    color: '#000000',
   },
   loginButton: {
     textAlign: 'center',
@@ -102,6 +105,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000',
     paddingVertical: 15,
     margin: 10,
+    borderRadius: 10
 },
   buttonText: {
     textAlign: 'center',
@@ -111,6 +115,9 @@ const styles = StyleSheet.create({
   switchButton: {
     width: 200,
     backgroundColor: '#3f51b5'
+  },
+  container1: {
+    marginBottom: 16    
   }
 });
 
