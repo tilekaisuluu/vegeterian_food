@@ -88,23 +88,16 @@ export async function getFoods(foodsRetrieved) {
     })
 }
 
-export async function getUserDetails(fetchUserDetails) {
+export async function getUserDetails(userRetrieved) {
   let user = firebase.auth().currentUser
   await firebase.firestore()
     .collection('users')
     .doc(user.uid)
-    .get()
-    .then(function(doc) {
+    .onSnapshot((doc) => {
       const userDetails = doc.data()
-      fetchUserDetails(userDetails)
-      console.log(userDetails)
-
+      userRetrieved(userDetails)
     })
 }
-
-
-
-
 
 
 export function uploadFood(food, onFoodUploaded, { updating }) {

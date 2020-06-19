@@ -3,10 +3,10 @@ import {
   StyleSheet,
   FlatList,
   SafeAreaView,
+  Button
 } from 'react-native';
-import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import { ListItem, Divider } from 'react-native-elements';
-import { addFood, getFoods} from '../api/FoodApi';
+import { getFoods, signout } from '../api/FoodApi';
 
 import ActionButton from 'react-native-action-button';
 
