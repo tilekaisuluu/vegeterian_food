@@ -3,36 +3,15 @@ import {
   StyleSheet,
   FlatList,
   SafeAreaView,
-  View,
-  Button,
-  VirtualizedList
 } from 'react-native';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import { ListItem, Divider } from 'react-native-elements';
-import { addFood, getFoods, signout } from '../api/FoodApi';
+import { addFood, getFoods} from '../api/FoodApi';
 
 import ActionButton from 'react-native-action-button';
 
 
 class Home extends Component {
-
-  static navigationOptions = ({ navigation }) => {
-
-    onSignedOut = () => {
-      navigation.navigate('Auth');
-    }
-
-    return {
-      title: 'Food List',
-      headerRight: () =>
-        <Button
-          title='log out'
-          onPress={() => signout(onSignedOut)} />
-
-    }
-  };
-
-
   state = {
     foodList: [],
     selectedIndex: 0
@@ -44,6 +23,7 @@ class Home extends Component {
       foodList: [...prevState.foodList, food]
     }));
   }
+
 
   onFoodDeleted = () => {
     var newFoodList = [...this.state.foodList]
@@ -61,9 +41,12 @@ class Home extends Component {
     this.setState({ foodList });
   }
 
+
   componentDidMount() {
     getFoods(this.onFoodsRecieved);
   }
+
+
   componentWillUnmount() {
     getFoods(this.onFoodsRecieved);
   }

@@ -23,15 +23,17 @@ export function login({ email, password }) {
 
 export function signup({ email, password, displayName }) {
   firebase.auth().createUserWithEmailAndPassword(email, password)
-    .then((userInfo) => {
-      console.log(userInfo)
-      userInfo.user.updateProfile({ displayName: displayName.trim() })
-        .then(() => { })
-    })
+  .then(cred => {
+    return firebase.firestore().collection('users').doc(cred.user.uid).set({
+      email: email,
+      name: displayName,
+    });
+  })
 }
 
 export function subscribeToAuthChanges(authStateChanged) {
   firebase.auth().onAuthStateChanged((user) => {
+    if (user) { userId = user.uid };
     authStateChanged(user);
   })
 }
@@ -43,6 +45,7 @@ export function signout(onSignedOut) {
       onSignedOut();
     })
 }
+
 
 
 
@@ -85,6 +88,23 @@ export async function getFoods(foodsRetrieved) {
     })
 }
 
+export async function getUserDetails(fetchUserDetails) {
+  let user = firebase.auth().currentUser
+  await firebase.firestore()
+    .collection('users')
+    .doc(user.uid)
+    .get()
+    .then(function(doc) {
+      const userDetails = doc.data()
+      fetchUserDetails(userDetails)
+      console.log(userDetails)
+
+    })
+}
+
+
+
+
 
 
 export function uploadFood(food, onFoodUploaded, { updating }) {
@@ -123,6 +143,7 @@ export function uploadFood(food, onFoodUploaded, { updating }) {
 
 export function addFood(food, addComplete) {
   food.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+  food.createdBy = firebase.auth().currentUser.uid;
 
   firebase.firestore()
     .collection('Foods')

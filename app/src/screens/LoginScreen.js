@@ -15,6 +15,7 @@ class LoginScreen extends Component {
 
   onAuthStateChanged = (user) => {
     if (user !== null) {
+      userId = user.uid;
       this.props.navigation.navigate('App');
     }
   }

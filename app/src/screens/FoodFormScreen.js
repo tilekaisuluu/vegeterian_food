@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import FoodForm from '../ui/FoodForm';
+import * as firebase from 'firebase';
+
 
 export default class FoodFormScreen extends Component {
 
@@ -15,7 +17,7 @@ export default class FoodFormScreen extends Component {
       name: null,
       category: null,
       notes: null,
-      subIngredients: []
+      subIngredients: [],
     },
       currentSubIngredient: null,
   }
